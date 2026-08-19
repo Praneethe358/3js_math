@@ -37,13 +37,15 @@ export function activate(context: vscode.ExtensionContext) {
         }, async () => {
             
             try {
+                const fileContext = editor.document.getText();
+                
                 // 3. Query the LLM with strict System Prompts
                 const completion = await openai.chat.completions.create({
                     model: "gpt-4o", // Or gpt-4o-mini for faster/cheaper results
                     messages: [
                         {
                             role: "system",
-                            content: "You are a Three.js r160+ math expert. Output ONLY valid TypeScript/JavaScript code. Do not use Markdown formatting (no ``` fences). Do not explain the code. Return only the raw code block required to perform the spatial operation."
+                            content: `You are a Three.js r160+ math expert. Output ONLY valid TypeScript/JavaScript code. Do not use Markdown formatting (no \`\`\` fences). Do not explain the code. Return only the raw code block required to perform the spatial operation.\n\nHere is the current file context for reference (use existing variable names):\n${fileContext}`
                         },
                         {
                             role: "user",
