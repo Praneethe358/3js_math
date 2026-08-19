@@ -67,7 +67,45 @@ export function activate(context: vscode.ExtensionContext) {
         });
     });
 
-    context.subscriptions.push(disposable);
+    let scaffoldDisposable = vscode.commands.registerCommand('threejs-math-copilot.scaffoldAR', async () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            vscode.window.showErrorMessage("Open a file to scaffold AR scene.");
+            return;
+        }
+
+        const arBoilerplate = `
+import * as THREE from 'three';
+import { ARButton } from 'three/examples/jsm/webxr/ARButton.js';
+
+// Setup basic AR Scene
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.xr.enabled = true;
+document.body.appendChild(renderer.domElement);
+
+// Add AR Button
+document.body.appendChild(ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] }));
+
+// Lighting
+const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+light.position.set(0.5, 1, 0.25);
+scene.add(light);
+
+// Render loop
+renderer.setAnimationLoop((timestamp, frame) => {
+    renderer.render(scene, camera);
+});
+`;
+
+        editor.edit(editBuilder => {
+            editBuilder.insert(editor.selection.active, arBoilerplate.trim());
+        });
+    });
+
+    context.subscriptions.push(disposable, scaffoldDisposable);
 }
 
 export function deactivate() {}

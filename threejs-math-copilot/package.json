@@ -16,6 +16,10 @@
       {
         "command": "threejs-math-copilot.generateMath",
         "title": "Three.js: Generate Math Copilot"
+      },
+      {
+        "command": "threejs-math-copilot.scaffoldAR",
+        "title": "Three.js: Scaffold AR Scene"
       }
     ]
   },
